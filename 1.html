@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>By adding fashion to fashion - chrome</title>
+<link rel="stylesheet" href="홈피.css">
+</head>
+<body>
+<h1><a href="index.html">FASHION</a></h1>
+<div id="grid">
+    <ol>
+    <li><a href="1.html">ACCESSORIES</a></li>
+    <li><a href="2.html">PANTS</a></li>
+    <li><a href="3.html">T-SHITS</a></li>
+    </ol>
+<div id="article">
+<h2>ACCESSORIES</h2>
+<p>
+악세사리는 귀걸이와 목걸이, 반지, 팔찌 등 금속품으로 다룬 장신구를 말한다.<br>
+근데 악세사리 착용 시 주의사항이 있다. <a href="https://www.vogue.co.kr/2018/04/12/%EA%B8%88%EC%86%8D-%EC%95%8C%EB%A0%88%EB%A5%B4%EA%B8%B0-%EB%8C%80%EC%B2%98%EB%B2%95/" target="_blant" title="html5 speicification">금속 알레르기</a>이다.<br>
+링크를 걸어둘테니 참고하길. 나의 경험 상 금속 알레르기가 있는 사람은 항상 <strong>은</strong> 아니면 <strong>금</strong>을 착용해야만 염증이 나지 않는다.<br> 
+</p>
+<p>
+Accessories refer to jewelry made of metal, such as earrings, necklaces, rings, and bracelets. <br>
+However, there are precautions when wearing accessories. That's a <a href="https://www.vogue.co.kr/2018/04/12/%EA%B8%88%EC%86%8D-%EC%95%8C%EB%A0%88%EB%A5%B4%EA%B8%B0-%EB%8C%80%EC%B2%98%EB%B2%95/" target="_blant" title="html5 speicification">Metal allergies</a>. Please note that I will put a link on it. <br>
+In my experience, people with metal allergies should wear <strong>siver</strong> or <strong>gold</strong> to avoid irritation.
+</p>
+
+<div style="visibility: hidden; position: absolute" id="webcam-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+<script type="text/javascript">
+    // More API functions here:
+    // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
+
+    // the link to your model provided by Teachable Machine export panel
+    const URL = "https://teachablemachine.withgoogle.com/models/jVBqcnbGK/";
+
+    let model, webcam, labelContainer, maxPredictions;
+
+    // Load the image model and setup the webcam
+    async function init() {
+        const modelURL = URL + "model.json";
+        const metadataURL = URL + "metadata.json";
+
+        // load the model and metadata
+        // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
+        // or files from your local hard drive
+        // Note: the pose library adds "tmImage" object to your window (window.tmImage)
+        model = await tmImage.load(modelURL, metadataURL);
+        maxPredictions = model.getTotalClasses();
+
+        // Convenience function to setup a webcam
+        const flip = true; // whether to flip the webcam
+        webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
+        await webcam.setup(); // request access to the webcam
+        await webcam.play();
+        window.requestAnimationFrame(loop);
+
+        // append elements to the DOM
+        document.getElementById("webcam-container").appendChild(webcam.canvas);
+        
+    }
+
+    async function loop() {
+        webcam.update(); // update the webcam frame
+        await predict();
+        window.requestAnimationFrame(loop);
+    }
+
+    // run the webcam image through the image model
+    async function predict() {
+        // predict can take in an image, video or canvas html element
+        const prediction = await model.predict(webcam.canvas);
+        console.log(prediction[0].probability);
+        if(prediction[0].probability > 0.5){
+          console.log('day');
+          document.querySelector('body').style.backgroundColor = 'white';
+          document.querySelector('body').style.color = 'black';
+        }else{
+          console.log('night');
+          document.querySelector('body').style.backgroundColor = 'black';
+          document.querySelector('body').style.color = 'white';
+        }
+        let a_list = document.querySelectorAll("a");
+          let i = 0;
+          while(i < a_list.length) {
+            a_list[i].style.color = "pink"; i++;
+          }
+    }
+    init();
+</script>
+</div>
+</div>
+</body>
+</html>
